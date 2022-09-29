@@ -60,6 +60,10 @@ function Main(source)
 end
 
 
+Citizen.CreateThread(function()
+    TriggerEvent('chat:addSuggestion', '/'..Config.CommandName, Config.CommandHint)
+end)
+
 RegisterCommand(Config.CommandName, function(source)
     Main(source)
 end)

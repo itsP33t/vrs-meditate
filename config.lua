@@ -14,6 +14,7 @@
 Config = {}
 -- Command
 Config.CommandName = "meditate" -- The command name, do not include the slash.
+Config.CommandHint = "Meditate to relieve stress"
 
 -- Notifications
 Config.NoStress = "You don't feel the need to meditate." -- Notification when player does not need to meditate.
