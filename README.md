@@ -12,6 +12,6 @@ This script was created by me and [tpeterka1](https://github.com/tpeterka1 "tpet
 
 **Requirements:**
 * QBCore
-* [ps-ui](https://github.com/Project-Sloth/ps-ui)
+* [ox_lib](https://github.com/overextended/ox_lib/releases)
 
-Want to see more? Check out my tebex. [p33t.tebex.io](https://p33t.tebex.io/ "p33t.tebex.io")
+Want to see more? Check out our tebex. [store.VerseScripts.net](https://store.verseScripts.net)

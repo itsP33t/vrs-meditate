@@ -3,7 +3,7 @@ fx_version 'cerulean'
 game 'gta5'
 
 author 'P33t, tpeterka1'
-version '1.0.0'
+version '2.0.0'
 
 client_scripts {
     'config.lua',
@@ -11,9 +11,11 @@ client_scripts {
 }
 
 dependencies {
-    'ps-ui',
+    'ox_lib',
     'qb-core'
 }
+
+shared_script '@ox_lib/init.lua'
 
 escrow_ignore {
     'client.lua',
@@ -21,4 +23,3 @@ escrow_ignore {
 }
 
 lua54 'yes'
-dependency '/assetpacks'

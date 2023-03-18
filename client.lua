@@ -1,18 +1,18 @@
 --[[
- /$$$$$$$   /$$$$$$   /$$$$$$    /$$    
-| $$__  $$ /$$__  $$ /$$__  $$  | $$    
-| $$  \ $$|__/  \ $$|__/  \ $$ /$$$$$$  
-| $$$$$$$/   /$$$$$/   /$$$$$/|_  $$_/  
-| $$____/   |___  $$  |___  $$  | $$    
-| $$       /$$  \ $$ /$$  \ $$  | $$ /$$
-| $$      |  $$$$$$/|  $$$$$$/  |  $$$$/
-|__/       \______/  \______/    \___/  
-            P33t.tebex.io
-    With collaboration from tpeterka1
+$$\    $$\                                         
+$$ |   $$ |                                        
+$$ |   $$ | $$$$$$\   $$$$$$\   $$$$$$$\  $$$$$$\  
+\$$\  $$  |$$  __$$\ $$  __$$\ $$  _____|$$  __$$\ 
+ \$$\$$  / $$$$$$$$ |$$ |  \__|\$$$$$$\  $$$$$$$$ |
+  \$$$  /  $$   ____|$$ |       \____$$\ $$   ____|
+   \$  /   \$$$$$$$\ $$ |      $$$$$$$  |\$$$$$$$\ 
+    \_/     \_______|\__|      \_______/  \_______|                                           
+            store.VerseScripts.net
+            by P33t and tpeterka1
 --]]
+-- Need help? https://discord.gg/rbahmK8kR7
 
--- For support join our discord: https://p33t.net/discord
--- Want more? check out my tebex: https://p33t.tebex.io
+-- Want more? check out our tebex: https://store.versescripts.net
 
 local QBCore = exports["qb-core"]:GetCoreObject()
 
@@ -23,7 +23,7 @@ function Main(source)
 
     -- Check if player even needs to meditate
     if Stress <= 0 then
-        QBCore.Functions.Notify(Config.NoStress, "error")
+       Notify("", Config.NoStress, 5000, "error")
         return
     end
 
@@ -40,7 +40,7 @@ function Main(source)
     TaskPlayAnim(PlayerPedId(), AnimDict, Anim, 1.0, 1.0, -1, 1, 0, 0, 0, 0)
 
     -- Start minigame
-    exports['ps-ui']:Circle(function(success)
+    local success = lib.skillCheck({'easy', 'easy', 'medium'}, {'w', 'a', 's', 'd'})
         if success then
             -- Remove rand. amount of stress
             local removeAmt = math.random(12, 24)
@@ -49,20 +49,15 @@ function Main(source)
             end
             TriggerServerEvent('hud:server:RelieveStress', removeAmt)
 
-            QBCore.Functions.Notify(Config.Success..removeAmt..Config.Success2, "success")
+            Notify("", Config.Success..removeAmt..Config.Success2, 2000, "success")
         else
             TriggerServerEvent('hud:server:GainStress', math.random(1, 3))
-            QBCore.Functions.Notify(Config.Interrupted, "error")
+            Notify("", Config.Interrupted, 2000, "error")
         end
         -- Stop anim
-        ClearPedTasks(PlayerPedId())
-    end, 5, 15) -- NumberOfCircles, MS
+        ClearPedTasks(PlayerPedId()) -- NumberOfCircles, MS
 end
 
-
-Citizen.CreateThread(function()
-    TriggerEvent('chat:addSuggestion', '/'..Config.CommandName, Config.CommandHint)
-end)
 
 RegisterCommand(Config.CommandName, function(source)
     Main(source)
@@ -72,12 +67,43 @@ RegisterNetEvent('p33t-meditate:client:meditate', function(source)
     Main(source)
 end)
 
-if Config.Debug == true then
-RegisterCommand("debug_gainstress", function(source)
-    TriggerServerEvent('hud:server:GainStress', 100)
-end)
 
-RegisterCommand("debug_cancelanim", function(source)
-    ClearPedTasks(PlayerPedId())
-end)
+function Notify(title, text, length, type, src)
+    if IsDuplicityVersion() then
+        -- Running on server
+        if Config.Notify == "qb" then
+            -- https://docs.qbcore.org/qbcore-documentation/qb-core/client-event-reference#qbcore-notify
+            TriggerClientEvent("QBCore:Notify", src, text, type, length)
+        elseif Config.Notify == "okok" then
+            -- https://docs.okokscripts.io/scripts/okoknotify
+            TriggerClientEvent('okokNotify:Alert', src, title, text, length, type)
+        elseif Config.Notify == "es.lib" then
+            -- https://github.com/ESFramework/es.lib
+            TriggerClientEvent("es.lib:showNotify", src, title, "noicon", text, length, type)
+        elseif Config.Notify == "brutal" then
+            -- https://docs.brutalscripts.com/site/scripts/brutal-notify
+            TriggerClientEvent('brutal_notify:SendAlert', src, title, text, length, type)
+        elseif Config.Notify == "b-dev" then
+            -- https://forum.cfx.re/t/paid-standalone-notify-the-best-notify-with-6-different-types/4905568
+            TriggerClientEvent("b-notify:notify", src, type, title, text)
+        end
+    else
+        -- Running on client
+        if Config.Notify == "qb" then
+            -- https://docs.qbcore.org/qbcore-documentation/qb-core/client-event-reference#qbcore-notify
+            TriggerEvent("QBCore:Notify", text, type, length)
+        elseif Config.Notify == "okok" then
+            -- https://docs.okokscripts.io/scripts/okoknotify
+            exports["okokNotify"]:Alert(title, text, length, type)
+        elseif Config.Notify == "es.lib" then
+            -- https://github.com/ESFramework/es.lib
+            TriggerEvent("es.lib:showNotify", title, "noicon", text, length, type)
+        elseif Config.Notify == "brutal" then
+            -- https://docs.brutalscripts.com/site/scripts/brutal-notify
+            exports["brutal_notify"]:SendAlert(title, text, length, type)
+        elseif Config.Notify == "b-dev" then
+            -- https://forum.cfx.re/t/paid-standalone-notify-the-best-notify-with-6-different-types/4905568
+            TriggerEvent("b-notify:notify", type, title, text)
+        end
+    end
 end
